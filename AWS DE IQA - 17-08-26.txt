@@ -1,0 +1,237 @@
+AWS DE IQA
+
+
+from pyspark.sql import functions as F
+from pyspark.sql.window import Window
+
+window_spec = Window.partitionBy("department") \
+                    .orderBy(F.col("salary").desc())
+
+result = df.withColumn(
+    "dense_rank",
+    F.dense_rank().over(window_spec)
+)
+
+result.show()
+
+
+====================================
+
+
+from pyspark.sql import functions as F
+from pyspark.sql.window import Window
+
+window_spec = Window.partitionBy("department") \
+                    .orderBy(F.col("salary").desc())
+
+result = df.withColumn(
+    "rank",
+    F.rank().over(window_spec)
+)
+
+result.show()
+
+=================
+
+top3 = result.filter(F.col("rank") <= 3)
+
+top3.show()
+
+
+=================
+
+
+
+
+| id | attr | val   |
+| -: | ---- | ----- |
+|  1 | name | alice |
+|  1 | city | ny    |
+|  2 | name | bob   |
+
+
+Expected output:
+
+| id | city | name  |
+| -: | ---- | ----- |
+|  1 | ny   | alice |
+|  2 | null | bob   |
+
+
+
+SELECT
+    id,
+    MAX(CASE WHEN attr = 'city' THEN val END) AS city,
+    MAX(CASE WHEN attr = 'name' THEN val END) AS name
+FROM employee_attr
+GROUP BY id
+ORDER BY id;
+
+
+result = df.groupBy("id") \
+    .pivot("attr") \
+    .agg(F.first("val"))
+
+result.show()
+
+
+==============================
+
+
+what is dynamic dataframe in glue?
+
+In AWS Glue, I would use a **DynamicFrame** when working with semi-structured or evolving data because it can handle schema inconsistencies better than a standard Spark DataFrame.
+For example, if JSON files in S3 have different columns across records, Glue DynamicFrame can represent those variations.
+I can read the data from S3 using the Glue Data Catalog or directly from the S3 path.
+Then I can apply Glue transformations such as `ApplyMapping`, `ResolveChoice`, `DropFields`, and `Join`.
+When I need standard PySpark operations like window functions, joins, or complex transformations, I convert the DynamicFrame to a DataFrame.
+After processing, I can convert it back to a DynamicFrame and write it to S3 or another target.
+
+```python
+from awsglue.context import GlueContext
+from pyspark.context import SparkContext
+from awsglue.dynamicframe import DynamicFrame
+
+sc = SparkContext.getOrCreate()
+glueContext = GlueContext(sc)
+
+# Read from Glue Data Catalog
+dyf = glueContext.create_dynamic_frame.from_catalog(
+    database="sales_db",
+    table_name="customer_data"
+)
+
+# DynamicFrame -> DataFrame
+df = dyf.toDF()
+
+# PySpark transformation
+df = df.filter(df["status"] == "ACTIVE")
+
+# DataFrame -> DynamicFrame
+dyf_result = DynamicFrame.fromDF(
+    df,
+    glueContext,
+    "dyf_result"
+)
+
+# Write to S3
+glueContext.write_dynamic_frame.from_options(
+    frame=dyf_result,
+    connection_type="s3",
+    connection_options={"path": "s3://my-bucket/curated/"},
+    format="parquet"
+)
+```
+
+**Interview point:** DynamicFrame is Glue-specific and is especially useful for **schema evolution and semi-structured data**, while DataFrame is generally preferred when I need advanced Spark transformations.
+
+
+=============================
+
+why cte instead subquery
+
+Interview answer:
+For a simple one-time calculation, I can use a subquery.
+For complex queries or when I need to reference the intermediate result multiple times, I prefer a CTE.
+CTEs improve readability and make multi-step transformations easier to understand.
+However, a CTE does not automatically mean better performance; the optimizer determines the execution plan.
+
+
+
+===============================
+
+
+narrow vs wide transformation:
+
+
+In PySpark, the main difference is that a narrow transformation does not require data to be shuffled across partitions, while a wide transformation requires a shuffle.
+
+Narrow transformation: Each output partition depends on only one input partition.
+Examples are filter(), map(), select(), and withColumn().
+Because there is no shuffle, narrow transformations are generally faster.
+Wide transformation: An output partition can depend on multiple input partitions.
+Examples are groupBy(), join(), distinct(), orderBy(), and repartition().
+Wide transformations cause data shuffle across executors, which can be expensive.
+For example, df.filter(df.salary > 50000) is a narrow transformation.
+df.groupBy("department").sum("salary") is a wide transformation because data must be brought together by department.
+In production, I try to minimize unnecessary wide transformations and optimize partitioning to reduce shuffle.
+Interview shortcut: Narrow = no shuffle, Wide = shuffle.
+
+
+===================================
+
+
+spark sql and normal sql
+
+
+Spark SQL and normal SQL both use SQL syntax, but they are designed for different execution environments.
+
+1. **Normal SQL** generally runs inside a traditional RDBMS such as Oracle, MySQL, PostgreSQL, or SQL Server.
+2. **Spark SQL** runs on the distributed Apache Spark engine and can process very large datasets across multiple machines.
+3. Normal SQL usually works with tables managed by a database, whereas Spark SQL can work with files such as **CSV, JSON, Parquet, and tables**.
+4. Spark SQL distributes processing across executors, while traditional SQL typically executes within the database infrastructure.
+5. Spark SQL supports distributed processing and is suitable for **TB/PB-scale data**.
+6. Traditional SQL is often preferred for transactional workloads and low-latency queries.
+7. Spark SQL provides APIs to combine SQL with **PySpark, Scala, or Java** transformations.
+8. In AWS, I can use Spark SQL in **AWS Glue or EMR** to process large datasets stored in S3.
+9. For example, I can register an S3 Parquet DataFrame as a temporary view and query it using Spark SQL.
+10. **Interview shortcut:** Normal SQL = database-oriented processing; **Spark SQL = distributed SQL processing for big data**.
+
+
+===============================
+
+
+project architecture explain:
+
+
+In my AWS Data Engineering project, I typically follow a **layered data architecture**, where data flows from source systems to S3, then through processing and finally into the analytics layer.
+
+1. **Source systems:** Data comes from Oracle, SQL Server, APIs, and application databases.
+2. **Ingestion:** I use **AWS DMS, Glue, or Airflow** to extract the data and land it into Amazon S3.
+3. **Raw/Bronze layer:** I keep the original data in S3 without major transformations for audit and reprocessing.
+4. **Processing:** AWS Glue with PySpark reads the raw data, performs cleansing, deduplication, validation, and business transformations.
+5. **Silver layer:** The cleansed and standardized data is stored in S3, usually in **Parquet format with appropriate partitions**.
+6. **Glue Data Catalog:** I maintain table metadata using Glue Crawlers or controlled schema definitions.
+7. **Gold layer:** Business-ready aggregated data is created for reporting and analytics.
+8. **Data warehouse:** When required, I load curated data into **Amazon Redshift** for high-performance analytical queries.
+9. **Consumption:** Analysts and business users can access the data through **Athena, Redshift, or BI tools such as Power BI**.
+10. **Orchestration and monitoring:** I use **Airflow/Glue Workflows, CloudWatch, and alerts** to manage dependencies, failures, retries, and SLA monitoring.
+11. **Security:** I use **IAM roles, KMS encryption, VPC/private connectivity, and least-privilege access** throughout the pipeline.
+12. **Production approach:** I also implement incremental loads/CDC, data-quality checks, reconciliation, audit logging, and a rollback/reprocessing strategy.
+
+**Simple architecture:**
+
+```text
+Oracle / SQL Server / APIs
+          |
+          v
+   DMS / Glue / Airflow
+          |
+          v
+      S3 Raw
+     (Bronze)
+          |
+          v
+   Glue + PySpark
+          |
+          v
+    S3 Silver
+   (Cleansed)
+          |
+          v
+    S3 Gold
+ (Business Data)
+          |
+          +--------> Athena
+          |
+          +--------> Redshift
+                         |
+                         v
+                  Power BI / Reports
+```
+
+**Interview closing line:**
+“In my project, the main focus is to build a scalable, secure, fault-tolerant pipeline where S3 acts as the data lake, Glue/Spark performs distributed processing, Redshift provides warehouse capabilities, and Airflow or Glue Workflows handles orchestration.”
+
+
+

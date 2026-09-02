@@ -1,0 +1,355 @@
+# AWS Data Engineering Flow
+
+You mentioned:
+
+* CAT
+* Crawler
+* Glue
+* RDS
+* Redshift
+* Athena
+
+These are commonly used together in an AWS Data Engineering pipeline.
+
+---
+
+# Overall Architecture
+
+```text id="e6ogkv"
+Data Source
+    ↓
+S3 Bucket
+    ↓
+Glue Crawler
+    ↓
+Glue Data Catalog (CAT)
+    ↓
+Glue ETL Job (PySpark)
+    ↓
+Redshift / RDS
+    ↓
+Athena / BI Tools
+```
+
+---
+
+# 1. S3 (Storage Layer)
+
+Amazon Web Services S3 stores:
+
+* CSV files
+* JSON files
+* Logs
+* Parquet files
+
+Example:
+
+```text id="gm6ihw"
+s3://sales-data/orders.csv
+```
+
+---
+
+# 2. Glue Crawler
+
+## What is Crawler?
+
+Crawler automatically:
+
+* Scans files in S3
+* Detects schema
+* Detects file format
+* Creates metadata tables
+
+Example:
+
+* Reads CSV headers
+* Finds columns:
+
+  * order_id
+  * customer_name
+  * amount
+
+---
+
+# 3. Glue Data Catalog (CAT)
+
+## CAT = Catalog
+
+The crawler stores metadata inside:
+
+AWS Glue Data Catalog
+
+It acts like a metadata database.
+
+Contains:
+
+* Table names
+* Column names
+* File formats
+* S3 locations
+
+---
+
+# Flow Example
+
+```text id="jlwmqo"
+orders.csv
+    ↓
+Crawler scans file
+    ↓
+Creates table in Glue Catalog
+    ↓
+Athena can query it
+```
+
+---
+
+# 4. Glue ETL Job
+
+## Purpose
+
+Transforms data using PySpark.
+
+Example:
+
+* Remove nulls
+* Convert date formats
+* Join datasets
+* Aggregate sales
+
+---
+
+# Glue Job Example
+
+```python id="s8chrl"
+from awsglue.context import GlueContext
+from pyspark.context import SparkContext
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+
+df = glueContext.create_dynamic_frame.from_catalog(
+    database="sales_db",
+    table_name="orders"
+)
+```
+
+---
+
+# 5. Athena
+
+## What is Athena?
+
+Amazon Athena allows SQL queries directly on S3 data.
+
+No server required.
+
+Example:
+
+```sql id="h7f3ho"
+SELECT * FROM orders
+WHERE amount > 1000;
+```
+
+Athena uses:
+
+* Glue Catalog metadata
+* S3 files
+
+---
+
+# Athena Flow
+
+```text id="7d4gl4"
+S3 Data
+   ↓
+Glue Catalog
+   ↓
+Athena SQL Query
+```
+
+---
+
+# 6. RDS
+
+## What is RDS?
+
+Amazon RDS is a managed relational database.
+
+Supports:
+
+* MySQL
+* PostgreSQL
+* Oracle
+* SQL Server
+
+Used for:
+
+* OLTP applications
+* Small-medium workloads
+
+---
+
+# Example Use Case
+
+Application stores:
+
+* Orders
+* Users
+* Payments
+
+inside RDS.
+
+---
+
+# 7. Redshift
+
+## What is Redshift?
+
+Amazon Redshift is a Data Warehouse.
+
+Used for:
+
+* Analytics
+* Reporting
+* BI dashboards
+* Huge datasets
+
+Optimized for:
+
+* OLAP queries
+
+---
+
+# RDS vs Redshift
+
+| Feature    | RDS           | Redshift           |
+| ---------- | ------------- | ------------------ |
+| Type       | Database      | Data Warehouse     |
+| Workload   | OLTP          | OLAP               |
+| Usage      | Transactions  | Analytics          |
+| Query Type | Small queries | Large aggregations |
+| Scale      | Medium        | Massive            |
+
+---
+
+# Full Real-Time Flow
+
+```text id="xyk9l9"
+Application
+    ↓
+RDS Database
+    ↓
+Export to S3
+    ↓
+Glue Crawler
+    ↓
+Glue Catalog
+    ↓
+Glue ETL Job
+    ↓
+Redshift
+    ↓
+Athena / Tableau / Power BI
+```
+
+---
+
+# Real Industry Example
+
+## E-Commerce Company
+
+### Step 1
+
+Website stores orders in:
+
+* Amazon RDS
+
+### Step 2
+
+Daily export to:
+
+* S3
+
+### Step 3
+
+Crawler scans files.
+
+### Step 4
+
+Metadata stored in:
+
+* AWS Glue Data Catalog
+
+### Step 5
+
+Glue ETL cleans data using PySpark.
+
+### Step 6
+
+Processed data loaded into:
+
+* Amazon Redshift
+
+### Step 7
+
+Analysts query using:
+
+* Amazon Athena
+* Tableau
+* Power BI
+
+---
+
+# Why Crawler is Important?
+
+Without crawler:
+
+* Need manual schema creation
+* Manual table definitions
+* Hard to manage changing files
+
+Crawler automates metadata discovery.
+
+---
+
+# Important Interview Point
+
+## Athena DOES NOT scan schema directly from S3 every time.
+
+Athena mainly depends on:
+
+* Glue Catalog metadata
+
+created by:
+
+* Glue Crawler
+
+---
+
+# Common AWS Data Engineer Stack
+
+| Service      | Purpose          |
+| ------------ | ---------------- |
+| S3           | Storage          |
+| Glue Crawler | Schema detection |
+| Glue Catalog | Metadata         |
+| Glue ETL     | Transformation   |
+| Athena       | Query S3         |
+| Redshift     | Data warehouse   |
+| RDS          | Transaction DB   |
+
+---
+
+# Simple Difference Summary
+
+| Service  | Main Purpose         |
+| -------- | -------------------- |
+| S3       | Store files          |
+| Crawler  | Discover schema      |
+| Catalog  | Store metadata       |
+| Glue     | ETL processing       |
+| Athena   | Query S3 using SQL   |
+| RDS      | Application database |
+| Redshift | Analytics warehouse  |
