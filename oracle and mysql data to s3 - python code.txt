@@ -1,0 +1,274 @@
+import pandas as pd
+from sqlalchemy import create_engine
+import boto3
+from datetime import datetime
+
+# -----------------------
+# MySQL Connection
+# -----------------------
+
+host = "localhost"
+port = "3306"
+database = "lasak_db"
+username = "root"
+password = "Rajan@123"
+
+engine = create_engine(
+    f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}"
+)
+
+# -----------------------
+# Read Data
+# -----------------------
+
+query = """
+SELECT *
+FROM orders
+"""
+
+df = pd.read_sql(query, engine)
+
+print("Data Read Successfully")
+print(df)
+
+# -----------------------
+# Create CSV File
+# -----------------------
+
+current_date = datetime.now().strftime("%Y%m%d")
+
+file_name = f"orders_{current_date}.csv"
+
+df.to_csv(file_name, index=False)
+
+print(f"{file_name} Created Successfully")
+
+# -----------------------
+# AWS S3 Connection
+# -----------------------
+
+s3 = boto3.client(
+    's3',
+    aws_access_key_id='your access key',
+    aws_secret_access_key='your secret key',
+    region_name='ap-south-1'
+)
+
+# -----------------------
+# Upload File to S3
+# -----------------------
+
+bucket_name = "ramasamy2"
+
+s3_key = f"orders/{file_name}"
+
+s3.upload_file(
+    file_name,
+    bucket_name,
+    s3_key
+)
+
+print("File Uploaded Successfully")
+
+print(
+    f"s3://{bucket_name}/{s3_key}"
+)
+
+
+
+
+
+==============================
+
+!pip install sqlalchemy boto3 pymysql
+
+
+===========================
+
+import pymysql
+
+try:
+    conn = pymysql.connect(
+        host="localhost",
+        user="root",
+        password="Rajan@123",
+        database="lasak_db",
+        port=3306
+    )
+
+    print("Connected Successfully")
+    conn.close()
+
+except Exception as e:
+    print("Error:", e)
+
+
+============================
+
+
+
+
+
+
+import pandas as pd
+from sqlalchemy import create_engine
+import boto3
+from datetime import datetime
+from sqlalchemy.engine import URL
+
+# -----------------------
+# MySQL Connection
+# -----------------------
+
+
+url = URL.create(
+    drivername="mysql+pymysql",
+    username="root",
+    password="Rajan@123",
+    host="localhost",
+    port=3306,
+    database="lasak_db"
+)
+
+engine = create_engine(url)
+# -----------------------
+# Read Data
+# -----------------------
+
+query = """
+SELECT *
+FROM orders
+"""
+
+df = pd.read_sql(query, engine)
+
+print("Data Read Successfully")
+print(df)
+
+# -----------------------
+# Create CSV File
+# -----------------------
+
+current_date = datetime.now().strftime("%Y%m%d")
+
+file_name = f"orders_{current_date}.csv"
+
+df.to_csv(file_name, index=False)
+
+print(f"{file_name} Created Successfully")
+
+# -----------------------
+# AWS S3 Connection
+# -----------------------
+
+s3 = boto3.client(
+    's3',
+    aws_access_key_id='your access key',
+    aws_secret_access_key='your secret  key',
+    region_name='ap-south-1'
+)
+
+# -----------------------
+# Upload File to S3
+# -----------------------
+
+bucket_name = "ramasamy2"
+
+s3_key = f"orders/{file_name}"
+
+s3.upload_file(
+    file_name,
+    bucket_name,
+    s3_key
+)
+
+print("File Uploaded Successfully")
+
+print(
+    f"s3://{bucket_name}/{s3_key}"
+)
+
+
+
+========================================
+
+
+https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html
+
+download the  instantclient-basiclite-windows.x64-21.22.0.0.0dbru file and extract then put the folder in,
+
+like c/oracle/instantclient_21_22
+
+
+
+
+!pip install pandas sqlalchemy oracledb boto3
+
+
+import pandas as pd
+from sqlalchemy import create_engine
+import oracledb
+import boto3
+from datetime import datetime
+
+# Enable Thick Mode
+oracledb.init_oracle_client(
+    lib_dir=r"C:\oracle\instantclient_21_22"
+)
+
+# Oracle Connection
+engine = create_engine(
+    "oracle+oracledb://hr:hr@localhost:1521/XE"
+)
+
+# Read Data
+df = pd.read_sql(
+    "SELECT * FROM EMPLOYEES",
+    engine
+)
+
+
+
+# -----------------------
+# Create CSV File
+# -----------------------
+
+# current_date = datetime.now().strftime("%Y%m%d%H%M%S")
+
+current_date = datetime.now().strftime("%Y%m%d")
+
+file_name = f"employees_{current_date}.csv"
+
+df.to_csv(file_name, index=False)
+
+print(f"{file_name} Created Successfully")
+
+# -----------------------
+# AWS S3 Connection
+# -----------------------
+
+s3 = boto3.client(
+    's3',
+    aws_access_key_id='your access key',
+    aws_secret_access_key='your secret  key',
+    region_name='ap-south-1'
+)
+
+# -----------------------
+# Upload File to S3
+# -----------------------
+
+bucket_name = "ramasamy2"
+
+s3_key = f"employees/{file_name}"
+
+s3.upload_file(
+    file_name,
+    bucket_name,
+    s3_key
+)
+
+print("File Uploaded Successfully")
+
+print(f"s3://{bucket_name}/{s3_key}")
+

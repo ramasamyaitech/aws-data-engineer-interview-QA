@@ -1,0 +1,625 @@
+Module 8: File Handling
+Reading files
+Writing files
+Appending data
+Working with CSV and text files
+
+
+with open("employees.txt", "w") as f:
+    f.write("1,Ram,Chennai\n")
+
+with open("employees.txt", "a") as f:
+    f.write("2,Ravi,Mumbai\n")
+
+with open("employees.txt", "r") as f:
+    data = f.read()
+    print(data)
+
+
+
+import csv
+with open("employees.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["id", "name", "city"])
+    writer.writerow([1, "Ram", "Chennai"])
+
+with open("employees.csv", "a", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow([2, "Ravi", "Mumbai"])
+
+with open("employees.csv", "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row)
+
+
+
+import json
+employee = {
+    "id": 1,
+    "name": "Ram",
+    "city": "Chennai"
+}
+
+with open("employee.json", "w") as f:
+    json.dump(employee, f)
+
+
+with open("employee.json", "r") as f:
+    data = json.load(f)
+    print(data)
+
+
+Append (Read → Modify → Write)
+
+with open("employee.json", "r") as f:
+    data = json.load(f)
+
+data["salary"] = 50000
+
+with open("employee.json", "w") as f:
+    json.dump(data, f)
+
+
+
+import pandas as pd
+df = pd.DataFrame({
+    "id":[1],
+    "name":["Ram"]
+})
+
+df.to_excel("employees.xlsx", index=False)
+
+
+df = pd.read_excel("employees.xlsx")
+print(df)
+
+
+new_df = pd.DataFrame({
+    "id":[2],
+    "name":["Ravi"]
+})
+
+old_df = pd.read_excel("employees.xlsx")
+combined = pd.concat([old_df, new_df])
+combined.to_excel("employees.xlsx", index=False)
+
+
+import pandas as pd
+df.to_parquet("employees.parquet")
+
+
+df = pd.read_parquet("employees.parquet")
+print(df)
+
+
+
+old_df = pd.read_parquet("employees.parquet")
+combined = pd.concat([old_df, new_df])
+combined.to_parquet("employees.parquet")
+
+
+
+xml_data = """
+<employees>
+    <employee>
+        <id>1</id>
+        <name>Ram</name>
+    </employee>
+</employees>
+"""
+
+with open("employees.xml", "w") as f:
+    f.write(xml_data)
+
+
+import xml.etree.ElementTree as ET
+
+tree = ET.parse("employees.xml")
+root = tree.getroot()
+
+for emp in root.findall("employee"):
+    print(emp.find("name").text)
+
+
+
+
+import csv
+import json
+
+# Read CSV
+with open("employees.csv", "r") as f:
+    reader = csv.DictReader(f)
+    data = list(reader)
+
+# Write JSON
+with open("employees.json", "w") as f:
+    json.dump(data, f, indent=4)
+
+# Read JSON
+with open("employees.json", "r") as f:
+    records = json.load(f)
+
+# Append new employee
+records.append({
+    "id": 3,
+    "name": "John",
+    "city": "Delhi"
+})
+
+# Save back to JSON
+with open("employees.json", "w") as f:
+    json.dump(records, f, indent=4)
+
+# Display records
+for record in records:
+    print(record)
+
+
+
+
+| File Type | Read | Write | Append | Library   |
+| --------- | ---- | ----- | ------ | --------- |
+| TXT       | ✓    | ✓     | ✓      | built-in  |
+| CSV       | ✓    | ✓     | ✓      | csv       |
+| JSON      | ✓    | ✓     | ✓      | json      |
+| Excel     | ✓    | ✓     | ✓      | pandas    |
+| Parquet   | ✓    | ✓     | ✓      | pandas    |
+| XML       | ✓    | ✓     | ✓      | xml.etree |
+| Avro      | ✓    | ✓     | ✓      | fastavro  |
+| ORC       | ✓    | ✓     | ✓      | pyorc     |
+
+
+
+============================
+
+
+Module 9: Exception Handling
+Errors and exceptions
+try, except
+finally
+Custom exceptions
+
+
+
+try:
+    num = 10 / 0        # execution
+except ZeroDivisionError:
+    print("Cannot divide by zero")    # Exception
+else:
+    print("Division successful")  # only if no exception occurs
+finally:
+    print("Execution completed")  # always execute
+
+
+try:
+    num = 10 / 0        # execution
+except Exception as e:
+    print("The error is : ", e)    # Exception
+else:
+    print("Division successful")  # only if no exception occurs
+finally:
+    print("Execution completed")  # always execute
+
+
+
+A custom exception is a user-defined error class. It is used when built-in exceptions (ValueError, TypeError, etc.) are not enough to describe your application's errors.
+
+
+Exception is the parent class.
+MyException is your own exception type.
+
+
+class InvalidAgeError(Exception):
+    pass
+age = int(input("Enter age: "))
+if age < 18:
+    raise InvalidAgeError("Age must be 18 or above")
+print("Eligible")
+
+
+
+class InvalidAgeError(Exception):
+    pass
+
+try:
+    age = 15
+    if age < 18:
+        raise InvalidAgeError("Age must be 18 or above")
+except InvalidAgeError as e:
+    print("Error:", e)
+
+
+
+class InsufficientBalanceError(Exception):
+    pass
+balance = 5000
+withdraw = 7000
+
+try:
+    if withdraw > balance:
+        raise InsufficientBalanceError("Not enough balance")
+
+    balance -= withdraw
+
+except InsufficientBalanceError as e:
+    print("Transaction Failed:", e)
+
+
+
+| Scenario        | Custom Exception           |
+| --------------- | -------------------------- |
+| Banking         | `InsufficientBalanceError` |
+| Login System    | `InvalidPasswordError`     |
+| E-commerce      | `OutOfStockError`          |
+| ETL Pipeline    | `EmptyDataError`           |
+| API             | `InvalidResponseError`     |
+| Employee System | `SalaryError`              |
+| Student Portal  | `InvalidMarksError`        |
+
+
+
+============================
+
+
+
+Module 10: Object-Oriented Programming (OOP)
+Classes and objects
+Constructors
+Inheritance
+Polymorphism
+Encapsulation
+Abstraction
+
+
+
+1. Classes and Objects
+A class is a template, and an object is an instance of that class.
+class Employee:
+    def display(self):
+        print("Employee Details")
+
+emp1 = Employee()   # object creation
+emp1.display()
+
+
+2. Constructors
+A constructor (__init__) initializes object attributes automatically when an object is created.
+class Employee:
+    def __init__(self, name, salary):
+        self.name = name
+        self.salary = salary
+emp = Employee("John", 50000)
+print(emp.name)
+print(emp.salary)
+
+
+3. Inheritance
+Inheritance allows one class to reuse properties and methods from another class.
+class Animal:
+    def sound(self):
+        print("Animal makes sound")
+
+class Dog(Animal):
+    def bark(self):
+        print("Dog barks")
+
+d = Dog()
+
+d.sound()
+d.bark()
+
+----------
+
+class Database:
+    def connect(self):
+        print("Connecting to database")
+
+class MySQL(Database):
+    def execute(self):
+        print("Executing query")
+
+db = MySQL()
+
+db.connect()
+db.execute()
+
+
+
+4. Polymorphism
+Same method name behaves differently depending on the object.
+class Dog:
+    def sound(self):
+        print("Bark")
+
+class Cat:
+    def sound(self):
+        print("Meow")
+
+animals = [Dog(), Cat()]
+
+for animal in animals:
+    animal.sound()
+
+----------
+
+class CSVLoader:
+    def load(self):
+        print("Loading CSV")
+
+class JSONLoader:
+    def load(self):
+        print("Loading JSON")
+
+sources = [CSVLoader(), JSONLoader()]
+
+for source in sources:
+    source.load()
+
+
+
+5. Encapsulation
+Encapsulation hides internal data and controls access.
+
+class Bank:
+    def __init__(self):
+        self.__balance = 10000   # private variable
+
+    def deposit(self, amount):
+        self.__balance += amount
+
+    def get_balance(self):
+        return self.__balance
+
+b = Bank()
+
+b.deposit(5000)
+print(b.get_balance())
+
+
+
+6. Abstraction
+Abstraction hides implementation details and shows only essential functionality.
+
+from abc import ABC, abstractmethod
+
+class Vehicle(ABC):
+
+    @abstractmethod
+    def start(self):
+        pass
+
+class Car(Vehicle):
+
+    def start(self):
+        print("Car Started")
+
+c = Car()
+c.start()
+
+
+from abc import ABC, abstractmethod
+
+class DataLoader(ABC):
+
+    @abstractmethod
+    def load(self):
+        pass
+
+
+class CSVLoader(DataLoader):
+
+    def load(self):
+        print("Reading CSV file")
+
+
+class JSONLoader(DataLoader):
+
+    def load(self):
+        print("Reading JSON file")
+
+
+sources = [CSVLoader(), JSONLoader()]
+
+for source in sources:
+    source.load()
+
+
+
+================
+
+
+Module 11: Advanced Python
+Iterators and Generators  - Every generator is an iterator, but not every iterator is a generator.
+Decorators
+Regular Expressions
+Multithreading
+Database connectivity (SQLite/MySQL)
+
+
+1. Iterators and Generators
+They allow processing data one item at a time, saving memory.
+
+Iterator
+An iterator object implements __iter__() and __next__().
+
+
+numbers = iter([10, 20, 30])
+
+print(next(numbers))
+print(next(numbers))
+print(next(numbers))
+
+
+Iterator
+records = iter([100, 200, 300])
+print(next(records))
+
+Generator
+def read_logs():
+    with open("server.log") as f:
+        for line in f:
+            yield line
+
+for log in read_logs():
+    process(log)
+
+
+2. Decorators
+A decorator modifies or extends a function without changing its code.
+
+def logger(func):
+    def wrapper():
+        print("Starting...")
+        func()
+        print("Finished")
+    return wrapper
+
+@logger
+def process_data():
+    print("Processing data")
+
+process_data()
+
+
+-------------
+
+import time
+
+def timer(func):
+    def wrapper():
+        start = time.time()
+        func()
+        end = time.time()
+        print("Time:", end - start)
+    return wrapper
+
+@timer
+def task():
+    time.sleep(2)
+
+task()
+
+
+--------------
+
+3. Regular Expressions (Regex)
+Used for pattern matching and text validation.
+
+import re
+text = "Order 123 shipped"
+
+result = re.findall(r'\d+', text)
+
+print(result)
+
+
+
+-------------
+
+Validate Email
+import re
+
+email = "abc@gmail.com"
+
+pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+
+if re.match(pattern, email):
+    print("Valid Email")
+
+
+-----------
+
+Extract dates:
+
+text = "Sales date: 2026-06-18"
+
+date = re.findall(r'\d{4}-\d{2}-\d{2}', text)
+
+print(date)
+
+
+----------
+
+4. Multithreading
+Runs multiple tasks simultaneously.
+
+import threading
+
+def task():
+    print("Running task")
+
+t1 = threading.Thread(target=task)
+t2 = threading.Thread(target=task)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
+
+----------
+
+Real-Time Example
+
+Download files in parallel:
+
+
+import threading
+import time
+
+def download(name):
+    print(f"Downloading {name}")
+    time.sleep(3)
+    print(f"{name} completed")
+
+t1 = threading.Thread(target=download, args=("File1",))
+t2 = threading.Thread(target=download, args=("File2",))
+
+t1.start()
+t2.start()
+
+
+----------------
+
+
+5. Database Connectivity
+
+Python can connect to databases such as SQLite and MySQL.
+
+import mysql.connector
+
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="root",
+    database="company"
+)
+
+cursor = conn.cursor()
+
+cursor.execute("SELECT * FROM employee")
+
+for row in cursor.fetchall():
+    print(row)
+
+conn.close()
+
+
+
+| Topic               | Purpose                     | Real-Time Use         |
+| ------------------- | --------------------------- | --------------------- |
+| Iterators           | Sequential access           | Lists, files          |
+| Generators          | Memory efficient processing | Large CSV files       |
+| Decorators          | Add functionality           | Logging, timing       |
+| Regular Expressions | Pattern matching            | Email/date validation |
+| Multithreading      | Concurrent execution        | File downloads, APIs  |
+| SQLite              | Embedded database           | Local storage         |
+| MySQL               | Enterprise database         | Applications, ETL     |
+
+
+
+
+
+
+

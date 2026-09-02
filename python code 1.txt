@@ -1,0 +1,243 @@
+
+1. Find Duplicate Records
+
+Find duplicate emails from a list.
+emails = ["a@gmail.com", "b@gmail.com", "a@gmail.com", "c@gmail.com"]
+
+duplicates = []
+
+for email in emails:
+    if emails.count(email) > 1 and email not in duplicates:
+        duplicates.append(email)
+
+print(duplicates)
+Output:
+['a@gmail.com']
+________________________________________
+2. Remove Duplicate Records
+
+Keep only unique values.
+data = [10, 20, 10, 30, 20, 40]
+
+result = list(set(data))
+
+print(result)
+________________________________________
+3. Count Word Frequency
+
+Find top occurring words in logs.
+text = "error warning error failed error"
+
+words = text.split()
+
+freq = {}
+
+for word in words:
+    freq[word] = freq.get(word, 0) + 1
+
+print(freq)
+Output
+{'error': 3, 'warning': 1, 'failed': 1}
+________________________________________
+4. Find Missing Number
+
+Data validation.
+nums = [1,2,3,4,6,7]
+
+n = 7
+
+expected = n*(n+1)//2
+actual = sum(nums)
+
+print(expected-actual)
+Output
+5
+________________________________________
+5. Group Records by Department
+
+Employee data processing.
+employees = [
+    ("IT","Ram"),
+    ("HR","John"),
+    ("IT","David")
+]
+
+result = {}
+
+for dept,name in employees:
+    result.setdefault(dept, []).append(name)
+
+print(result)
+Output
+{'IT': ['Ram', 'David'], 'HR': ['John']}
+________________________________________
+6. Largest Transaction
+
+Banking transaction analysis.
+transactions = [1000,5000,2500,9000]
+
+print(max(transactions))
+Output
+9000
+________________________________________
+7. Read Large File Efficiently
+
+Log file processing.
+with open("log.txt","r") as file:
+    for line in file:
+        print(line.strip())
+Interviewers ask:
+Why not read()?
+Answer:
+read() loads entire file into memory.
+________________________________________
+8. Find Top 3 Highest Salaries
+salaries = [30000,70000,50000,90000,80000]
+
+top3 = sorted(salaries, reverse=True)[:3]
+
+print(top3)
+Output
+[90000,80000,70000]
+________________________________________
+9. Merge Two Dictionaries
+d1 = {"a":1,"b":2}
+d2 = {"c":3,"d":4}
+
+result = {**d1, **d2}
+
+print(result)
+________________________________________
+10. Anagram Check
+
+Asked frequently.
+s1 = "listen"
+s2 = "silent"
+
+if sorted(s1) == sorted(s2):
+    print("Anagram")
+else:
+    print("Not Anagram")
+________________________________________
+11. Find Second Largest Number
+nums = [10,50,70,90,40]
+
+nums = list(set(nums))
+
+nums.sort()
+
+print(nums[-2])
+Output
+70
+________________________________________
+12. Flatten Nested List
+data = [[1,2],[3,4],[5,6]]
+
+result = []
+
+for item in data:
+    result.extend(item)
+
+print(result)
+Output
+[1,2,3,4,5,6]
+________________________________________
+13. Palindrome Check
+text = "madam"
+
+if text == text[::-1]:
+    print("Palindrome")
+else:
+    print("Not Palindrome")
+________________________________________
+14. Find First Non-Repeated Character
+text = "aabbcdde"
+
+for ch in text:
+    if text.count(ch) == 1:
+        print(ch)
+        break
+Output
+c
+________________________________________
+15. Generator for Large Data
+
+Data Engineering interview favorite.
+def numbers():
+    for i in range(1000000):
+        yield i
+
+for num in numbers():
+    print(num)
+Why Generator?
+•	Memory efficient
+•	Loads data one by one
+________________________________________
+16. Decorator Question
+def logger(func):
+
+    def wrapper():
+        print("Started")
+        func()
+        print("Completed")
+
+    return wrapper
+
+@logger
+def process():
+    print("Processing")
+
+process()
+Output
+Started
+Processing
+Completed
+________________________________________
+17. Multi-threading
+
+Process multiple files.
+from threading import Thread
+
+def task():
+    print("Running")
+
+t1 = Thread(target=task)
+t2 = Thread(target=task)
+
+t1.start()
+t2.start()
+________________________________________
+18. Exception Handling
+try:
+    num = int(input("Enter Number: "))
+    print(100/num)
+
+except ZeroDivisionError:
+    print("Cannot divide by zero")
+
+except ValueError:
+    print("Invalid Input")
+________________________________________
+19. Most Asked Data Engineer 
+Remove Duplicate Rows
+records = [
+    (1,"Ram"),
+    (2,"John"),
+    (1,"Ram")
+]
+
+unique = list(set(records))
+
+print(unique)
+________________________________________
+20. Log Analysis (Very Common)
+
+count = 0
+
+with open("app.log") as file:
+
+    for line in file:
+        if "ERROR" in line:
+            count += 1
+
+print("Total Errors:", count)

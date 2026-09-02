@@ -1,0 +1,362 @@
+Python - 1
+
+Python Syntax and Comments - Python uses indentation instead of braces {}.
+
+if age >= 18:
+    print("Eligible")
+
+if marks >= 35:
+    print("Result: Pass")
+else:
+    print("Result: Fail")
+
+
+# This is a comment
+
+"""
+This is
+a multiline
+comment
+"""
+
+print(name, age)
+
+name = input("Enter your name: ")
+
+print("Hello", name)
+
+age = int(input("Enter age: "))
+
+
+variable - Can contain letters, numbers, and underscores. Cannot start with a number. Case-sensitive.
+
+temperature = 37.5, print("Temperature =", temperature)
+
+
+Boolean values represent either True or False. 0,1,"","Raja"
+
+
+x = "100" num = int(x), x = "99.9" num = float(x), age = 25 text = str(age), print(bool(1)) print(bool(0)) print(bool("")) print(bool("Python"))
+
+Arithmetic operators    ->  + - / * %
+Comparison operators    ->  == < <= > >= !=
+Logical operators       -> and or not
+Assignment operators    -> = += -= *= /= %=
+Membership and Identity operators -> in, not in - "p" in "python". is, not is - a=5 , b=a, a is b give True.
+
+is → Checks whether both variables refer to the same object in memory.
+== → Checks whether the values are equal.
+
+
+
+if, elif, else
+Nested conditions - if condition:if condition
+marks = 85
+
+if marks >= 35:
+    if marks >= 75:
+        print("Distinction")
+    else:
+        print("Pass")
+else:
+    print("Fail")
+
+balance = 10000
+amount = 5000
+
+if balance >= amount:
+    if amount <= 20000:
+        print("Withdrawal Successful")
+    else:
+        print("Daily limit exceeded")
+else:
+    print("Insufficient balance")
+
+
+
+for loops  - A for loop is used to iterate over a sequence such as a list, string, tuple, or range.
+
+name = "Python"
+
+for ch in name:
+    print(ch)
+
+
+while loops - A while loop executes as long as the condition is True.
+
+i = 1
+
+while i <= 5:
+    print(i)
+    i += 1
+
+attempts = 3
+
+while attempts > 0:
+    print("Attempts remaining:", attempts)
+    attempts -= 1
+
+
+
+break - break immediately terminates the loop. only one search
+products = ["Laptop", "TV", "Mobile", "TV", "Camera"]
+for item in products:
+    if item == "TV":
+        print("Product Found")
+        break
+continue - continue skips the current iteration and moves to the next iteration. Python skips the remaining code inside the loop for that iteration and moves to the next item.
+
+orders = [
+    {"id": 101, "status": "Completed"},
+    {"id": 102, "status": "Cancelled"},
+    {"id": 103, "status": "Completed"}
+]
+
+for order in orders:
+    if order["status"] == "Cancelled":
+        continue
+
+    print(f"Processing Order {order['id']}")
+
+---
+
+records = [
+    {"name": "Ram", "age": 30},
+    {"name": "Sita", "age": None},
+    {"name": "John", "age": 25}
+]
+
+for record in records:
+    if record["age"] is None:
+        continue
+
+    print("Loading:", record)
+---
+days = ["Mon", "Tue", "Sat", "Sun", "Wed"]
+
+for day in days:
+    if day in ["Sat", "Sun"]:
+        continue
+
+    print("Running batch job on", day)
+---
+tasks = [
+    {"task": "extract", "status": "success"},
+    {"task": "transform", "status": "failed"},
+    {"task": "load", "status": "success"}
+]
+
+for task in tasks:
+    if task["status"] == "failed":
+        continue
+
+    print("Executing", task["task"])
+
+pass-pass does nothing. It acts as a placeholder.
+records = [
+    {"id": 101, "status": "valid"},
+    {"id": 102, "status": "invalid"},
+    {"id": 103, "status": "valid"}
+]
+
+for record in records:
+    if record["status"] == "invalid":
+        pass      # logic will be added later
+    else:
+        print("Processing", record["id"])
+
+
+==========================
+
+
+Lists - [], Ordered and mutable (can be changed). Allows duplicate values.
+Tuples - (), Ordered and immutable (cannot be changed). Allows duplicate values.
+Sets - {1,2,3}, Unordered and mutable. Does not allow duplicate values.
+Dictionaries - Stores data as key-value pairs. Keys are unique.
+List comprehensions - List comprehensions are widely used in data engineering, ETL pipelines, APIs, and web applications to create, transform, and filter lists in a concise way
+data = [100, None, 200, None, 300]
+clean_data = [x for x in data if x is not None]
+print(clean_data)
+
+------
+
+products = [
+    {"name": "Laptop", "price": 60000},
+    {"name": "Mouse", "price": 500},
+    {"name": "Mobile", "price": 30000}
+]
+
+expensive_products = [
+    p["name"]
+    for p in products
+    if p["price"] > 10000
+]
+
+print(expensive_products)
+
+-----------
+
+rows = ["100", "200", "300"]
+
+numbers = [int(x) for x in rows]
+
+print(numbers)
+
+---
+
+logs = [
+    "INFO User login",
+    "ERROR Database failed",
+    "INFO Payment successful",
+    "ERROR API timeout"
+]
+
+errors = [log for log in logs if "ERROR" in log]
+
+print(errors)
+
+
+del
+list.clear()
+
+
+List Methods
+
+| Method             | Description                 |
+| ------------------ | --------------------------- |
+| `append(x)`        | Add item at end             |
+| `extend(iterable)` | Add multiple items          |
+| `insert(i, x)`     | Insert item at position     |
+| `remove(x)`        | Remove first occurrence     |
+| `pop()`            | Remove and return last item |
+| `clear()`          | Remove all items            |
+| `index(x)`         | Return index of item        |
+| `count(x)`         | Count occurrences           |
+| `sort()`           | Sort list                   |
+| `reverse()`        | Reverse list                |
+| `copy()`           | Create copy                 |
+
+
+Tuple Methods
+
+| Method     | Description          |
+| ---------- | -------------------- |
+| `count(x)` | Count occurrences    |
+| `index(x)` | Return index of item |
+
+
+Set Methods
+
+| Method              | Description                        |
+| ------------------- | ---------------------------------- |
+| `add(x)`            | Add an element                     |
+| `update(iterable)`  | Add multiple elements              |
+| `remove(x)`         | Remove element (error if absent)   |
+| `discard(x)`        | Remove element (no error)          |
+| `pop()`             | Remove random element              |
+| `clear()`           | Remove all elements                |
+| `copy()`            | Create copy                        |
+| `union(set)`        | Combine sets                       |
+| `intersection(set)` | Common elements                    |
+| `difference(set)`   | Elements present only in first set |
+| `issubset(set)`     | Check subset                       |
+| `issuperset(set)`   | Check superset                     |
+
+
+Dictionary Methods
+
+| Method                   | Description            |
+| ------------------------ | ---------------------- |
+| `get(key)`               | Get value              |
+| `keys()`                 | Return all keys        |
+| `values()`               | Return all values      |
+| `items()`                | Return key-value pairs |
+| `update(dict)`           | Update dictionary      |
+| `pop(key)`               | Remove key             |
+| `popitem()`              | Remove last item       |
+| `clear()`                | Remove all items       |
+| `copy()`                 | Create copy            |
+| `setdefault(key, value)` | Insert if key absent   |
+
+
+String Methods in Python
+
+| Method              | Description                         | Example                          |
+| ------------------- | ----------------------------------- | -------------------------------- |
+| `upper()`           | Convert to uppercase                | `text.upper()` → `"HELLO WORLD"` |
+| `lower()`           | Convert to lowercase                | `text.lower()`                   |
+| `title()`           | First letter of each word uppercase | `text.title()`                   |
+| `capitalize()`      | First letter uppercase              | `text.capitalize()`              |
+| `strip()`           | Remove spaces from both ends        | `" hi ".strip()`                 |
+| `lstrip()`          | Remove left spaces                  | `" hi".lstrip()`                 |
+| `rstrip()`          | Remove right spaces                 | `"hi ".rstrip()`                 |
+| `replace(old, new)` | Replace substring                   | `text.replace("hello", "hi")`    |
+| `split()`           | Split string into list              | `"a,b,c".split(",")`             |
+| `join(iterable)`    | Join elements into string           | `"-".join(["a","b","c"])`        |
+| `find(sub)`         | Return index of substring           | `text.find("world")`             |
+| `index(sub)`        | Return index (error if not found)   | `text.index("world")`            |
+| `count(sub)`        | Count occurrences                   | `text.count("l")`                |
+| `startswith(sub)`   | Check prefix                        | `text.startswith("hello")`       |
+| `endswith(sub)`     | Check suffix                        | `text.endswith("world")`         |
+| `isalpha()`         | All characters are letters          | `"abc".isalpha()`                |
+| `isdigit()`         | All characters are digits           | `"123".isdigit()`                |
+| `isalnum()`         | Letters and numbers only            | `"abc123".isalnum()`             |
+| `isspace()`         | All characters are spaces           | `"   ".isspace()`                |
+| `len()`             | Length of string                    | `len(text)`                      |
+
+
+
+=====================
+
+
+Module 6: Functions
+
+Defining functions - def function_name():
+Function arguments - def function_name(a,b):
+Return statements - Used to send a value back from a function.
+Lambda functions - Small anonymous functions defined using lambda. - square = lambda x: x * x  print(square(5))
+Recursion - A function calling itself.
+def factorial(n):
+    if n == 1:
+        return 1
+    return n * factorial(n - 1)
+
+print(factorial(5))
+
+
+==================
+
+
+Module 7: Modules and Packages
+
+Importing modules
+import math
+print(math.sqrt(25))
+
+Creating modules
+A module is a Python file containing functions and variables.
+mymodule.py
+def greet(name):
+    return "Hello " + name
+
+import mymodule
+print(mymodule.greet("Ram"))
+
+Standard libraries
+Built-in modules provided by Python.
+| Module     | Purpose                       |
+| ---------- | ----------------------------- |
+| `math`     | Mathematical functions        |
+| `random`   | Generate random numbers       |
+| `datetime` | Date and time operations      |
+| `os`       | File and directory operations |
+| `sys`      | System-related functions      |
+| `json`     | Work with JSON data           |
+
+
+Installing packages with pip
+pip is Python's package manager.
+Used to install external packages.
+
+
+

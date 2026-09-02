@@ -1,0 +1,440 @@
+Star Schema Example
+
+                Dim_Customer
+                     |
+                     |
+Dim_Product --- Fact_Sales --- Dim_Date
+                     |
+                     |
+               Dim_Store
+
+
+Real-Time Example
+
+Suppose Amazon records every order.
+
+
+Fact_Order
+
+| Order_ID | Customer_Key | Product_Key | Date_Key | Qty | Amount |
+| -------- | ------------ | ----------- | -------- | --- | ------ |
+| 1        | 101          | 201         | 20250601 | 2   | 1000   |
+| 2        | 102          | 202         | 20250601 | 1   | 500    |
+
+
+
+Dim_Customer
+
+| Customer_Key | Customer_Name | City      |
+| ------------ | ------------- | --------- |
+| 101          | Raj           | Chennai   |
+| 102          | Kumar         | Bangalore |
+
+
+Dim_Product
+
+| Product_Key | Product_Name | Category    |
+| ----------- | ------------ | ----------- |
+| 201         | Laptop       | Electronics |
+| 202         | Mobile       | Electronics |
+
+
+
+SELECT
+    c.City,
+    SUM(f.Amount) AS Total_Sales
+FROM Fact_Order f
+JOIN Dim_Customer c
+ON f.Customer_Key = c.Customer_Key
+GROUP BY c.City;
+
+
+
+=============================
+
+Fact vs Dimension Table
+
+| Feature     | Fact Table        | Dimension Table     |
+| ----------- | ----------------- | ------------------- |
+| Purpose     | Stores metrics    | Stores descriptions |
+| Data Type   | Numeric           | Textual             |
+| Size        | Very Large        | Smaller             |
+| Records     | Billions possible | Thousands/Millions  |
+| Aggregation | SUM, AVG, COUNT   | GROUP BY, FILTER    |
+| Example     | Sales Amount      | Customer Name       |
+| Keys        | Foreign Keys      | Primary Keys        |
+
+
+Interview Question
+Identify Fact and Dimension
+
+| Column        | Table Type |
+| ------------- | ---------- |
+| Sales Amount  | Fact       |
+| Quantity      | Fact       |
+| Profit        | Fact       |
+| Customer Name | Dimension  |
+| Product Name  | Dimension  |
+| City          | Dimension  |
+| Date          | Dimension  |
+
+
+
+Simple Rule
+
+✅ Numbers you want to calculate → Fact Table
+
+✅ Descriptions you want to filter/group by → Dimension Table
+
+Example:
+
+Revenue = Fact
+Quantity = Fact
+Customer = Dimension
+Product = Dimension
+Date = Dimension
+Store = Dimension
+
+
+================================
+
+
+
+# Banking Domain Data Warehouse Example (Real-Time Scenario)
+
+Let's build a **Banking Data Warehouse** from scratch with:
+
+* Fact Table
+* Dimension Tables
+* 30+ Records
+* Business Story
+* Reporting Queries
+
+---
+
+# Business Story
+
+Suppose you work for **ABC Bank**.
+
+The bank wants reports such as:
+
+1. Total transaction amount by customer
+2. Total deposits by branch
+3. Total withdrawals by city
+4. Monthly transaction volume
+5. Customer-wise transaction analysis
+
+Source systems:
+
+```text
+Core Banking System
+ATM System
+Internet Banking
+Mobile Banking
+Credit Card System
+```
+
+All data is loaded into a Data Warehouse.
+
+---
+
+# Step 1: Customer Dimension
+
+## Dim_Customer
+
+| Customer_Key | Customer_ID | Customer_Name | City      | State       |
+| ------------ | ----------- | ------------- | --------- | ----------- |
+| 1            | C1001       | Raj           | Chennai   | Tamil Nadu  |
+| 2            | C1002       | Kumar         | Bangalore | Karnataka   |
+| 3            | C1003       | Ravi          | Hyderabad | Telangana   |
+| 4            | C1004       | John          | Mumbai    | Maharashtra |
+| 5            | C1005       | David         | Delhi     | Delhi       |
+
+---
+
+# Step 2: Account Dimension
+
+## Dim_Account
+
+| Account_Key | Account_No | Account_Type |
+| ----------- | ---------- | ------------ |
+| 1           | 100001     | Savings      |
+| 2           | 100002     | Current      |
+| 3           | 100003     | Savings      |
+| 4           | 100004     | Current      |
+| 5           | 100005     | Savings      |
+
+---
+
+# Step 3: Branch Dimension
+
+## Dim_Branch
+
+| Branch_Key | Branch_Name     | City      |
+| ---------- | --------------- | --------- |
+| 1          | T Nagar         | Chennai   |
+| 2          | Adyar           | Chennai   |
+| 3          | MG Road         | Bangalore |
+| 4          | Banjara Hills   | Hyderabad |
+| 5          | Connaught Place | Delhi     |
+
+---
+
+# Step 4: Date Dimension
+
+## Dim_Date
+
+| Date_Key | Date        | Month | Quarter | Year |
+| -------- | ----------- | ----- | ------- | ---- |
+| 20250101 | 01-Jan-2025 | Jan   | Q1      | 2025 |
+| 20250102 | 02-Jan-2025 | Jan   | Q1      | 2025 |
+| 20250103 | 03-Jan-2025 | Jan   | Q1      | 2025 |
+| 20250104 | 04-Jan-2025 | Jan   | Q1      | 2025 |
+| 20250105 | 05-Jan-2025 | Jan   | Q1      | 2025 |
+
+---
+
+# Step 5: Transaction Fact Table
+
+## Fact_Transactions
+
+| Transaction_ID | Customer_Key | Account_Key | Branch_Key | Date_Key | Transaction_Type | Amount |
+| -------------- | ------------ | ----------- | ---------- | -------- | ---------------- | ------ |
+| 1              | 1            | 1           | 1          | 20250101 | Deposit          | 10000  |
+| 2              | 2            | 2           | 3          | 20250101 | Withdrawal       | 5000   |
+| 3              | 3            | 3           | 4          | 20250101 | Deposit          | 15000  |
+| 4              | 4            | 4           | 5          | 20250101 | Deposit          | 20000  |
+| 5              | 5            | 5           | 5          | 20250101 | Withdrawal       | 3000   |
+| 6              | 1            | 1           | 1          | 20250102 | Deposit          | 12000  |
+| 7              | 2            | 2           | 3          | 20250102 | Deposit          | 8000   |
+| 8              | 3            | 3           | 4          | 20250102 | Withdrawal       | 4000   |
+| 9              | 4            | 4           | 5          | 20250102 | Deposit          | 10000  |
+| 10             | 5            | 5           | 5          | 20250102 | Deposit          | 7000   |
+| 11             | 1            | 1           | 1          | 20250103 | Withdrawal       | 2000   |
+| 12             | 2            | 2           | 3          | 20250103 | Deposit          | 15000  |
+| 13             | 3            | 3           | 4          | 20250103 | Deposit          | 9000   |
+| 14             | 4            | 4           | 5          | 20250103 | Withdrawal       | 5000   |
+| 15             | 5            | 5           | 5          | 20250103 | Deposit          | 11000  |
+| 16             | 1            | 1           | 1          | 20250104 | Deposit          | 13000  |
+| 17             | 2            | 2           | 3          | 20250104 | Withdrawal       | 3000   |
+| 18             | 3            | 3           | 4          | 20250104 | Deposit          | 7000   |
+| 19             | 4            | 4           | 5          | 20250104 | Deposit          | 16000  |
+| 20             | 5            | 5           | 5          | 20250104 | Deposit          | 5000   |
+| 21             | 1            | 1           | 1          | 20250105 | Deposit          | 6000   |
+| 22             | 2            | 2           | 3          | 20250105 | Deposit          | 14000  |
+| 23             | 3            | 3           | 4          | 20250105 | Withdrawal       | 2000   |
+| 24             | 4            | 4           | 5          | 20250105 | Deposit          | 18000  |
+| 25             | 5            | 5           | 5          | 20250105 | Deposit          | 9000   |
+| 26             | 1            | 1           | 1          | 20250105 | Deposit          | 4000   |
+| 27             | 2            | 2           | 3          | 20250105 | Deposit          | 5000   |
+| 28             | 3            | 3           | 4          | 20250105 | Deposit          | 6000   |
+| 29             | 4            | 4           | 5          | 20250105 | Withdrawal       | 4000   |
+| 30             | 5            | 5           | 5          | 20250105 | Deposit          | 8000   |
+
+---
+
+# Star Schema
+
+```text
+                     Dim_Customer
+                           |
+                           |
+Dim_Account ---- Fact_Transactions ---- Dim_Branch
+                           |
+                           |
+                       Dim_Date
+```
+
+---
+
+# Business Query 1
+
+## Total Transaction Amount by Customer
+
+```sql
+SELECT
+    c.Customer_Name,
+    SUM(f.Amount) AS Total_Amount
+FROM Fact_Transactions f
+JOIN Dim_Customer c
+ON f.Customer_Key = c.Customer_Key
+GROUP BY c.Customer_Name;
+```
+
+---
+
+# Business Query 2
+
+## Total Deposit by Customer
+
+```sql
+SELECT
+    c.Customer_Name,
+    SUM(f.Amount) AS Deposit_Amount
+FROM Fact_Transactions f
+JOIN Dim_Customer c
+ON f.Customer_Key = c.Customer_Key
+WHERE f.Transaction_Type='Deposit'
+GROUP BY c.Customer_Name;
+```
+
+---
+
+# Business Query 3
+
+## Total Withdrawal by Customer
+
+```sql
+SELECT
+    c.Customer_Name,
+    SUM(f.Amount) AS Withdrawal_Amount
+FROM Fact_Transactions f
+JOIN Dim_Customer c
+ON f.Customer_Key = c.Customer_Key
+WHERE f.Transaction_Type='Withdrawal'
+GROUP BY c.Customer_Name;
+```
+
+---
+
+# Business Query 4
+
+## Total Transaction Amount by Branch
+
+```sql
+SELECT
+    b.Branch_Name,
+    SUM(f.Amount) AS Total_Amount
+FROM Fact_Transactions f
+JOIN Dim_Branch b
+ON f.Branch_Key = b.Branch_Key
+GROUP BY b.Branch_Name;
+```
+
+---
+
+# Business Query 5
+
+## Total Transaction Amount by City
+
+```sql
+SELECT
+    c.City,
+    SUM(f.Amount) AS Total_Amount
+FROM Fact_Transactions f
+JOIN Dim_Customer c
+ON f.Customer_Key = c.Customer_Key
+GROUP BY c.City;
+```
+
+---
+
+# Business Query 6
+
+## Monthly Transaction Report
+
+```sql
+SELECT
+    d.Month,
+    SUM(f.Amount) AS Total_Amount
+FROM Fact_Transactions f
+JOIN Dim_Date d
+ON f.Date_Key = d.Date_Key
+GROUP BY d.Month;
+```
+
+---
+
+# Business Query 7
+
+## Savings vs Current Account Analysis
+
+```sql
+SELECT
+    a.Account_Type,
+    SUM(f.Amount) AS Total_Amount
+FROM Fact_Transactions f
+JOIN Dim_Account a
+ON f.Account_Key = a.Account_Key
+GROUP BY a.Account_Type;
+```
+
+---
+
+# Business Query 8
+
+## Top 5 Customers
+
+```sql
+SELECT
+    c.Customer_Name,
+    SUM(f.Amount) AS Total_Amount
+FROM Fact_Transactions f
+JOIN Dim_Customer c
+ON f.Customer_Key = c.Customer_Key
+GROUP BY c.Customer_Name
+ORDER BY Total_Amount DESC
+LIMIT 5;
+```
+
+---
+
+# Real ETL Flow
+
+```text
+Core Banking
+ATM
+UPI
+Internet Banking
+Credit Card
+       |
+       |
+   AWS Glue
+   Informatica
+   Talend
+       |
+       |
+Fact_Transactions
+Dim_Customer
+Dim_Account
+Dim_Branch
+Dim_Date
+       |
+       |
+Snowflake / Redshift
+       |
+       |
+Power BI / Tableau
+```
+
+### Interview Explanation
+
+**Fact Table**
+
+* Transaction Amount
+* Deposit Amount
+* Withdrawal Amount
+* Number of Transactions
+
+**Dimension Tables**
+
+* Customer
+* Branch
+* Account
+* Date
+
+**Granularity (Grain)**
+
+* One row in Fact_Transactions = One Banking Transaction
+
+This is a typical banking star schema used for transaction analytics, branch performance, customer analytics, and regulatory reporting.
+
+
+
+
+
+
+
+
+
+
