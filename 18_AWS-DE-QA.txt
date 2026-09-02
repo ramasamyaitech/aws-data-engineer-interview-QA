@@ -1,0 +1,50 @@
+explain data ware house concept?
+data modelling?
+aws services used?
+python pyspark?
+snowflack?
+
+
+diff star and snowflack schema?
+scd2 explain. how maintain table level
+same record present already in target. how to delete duplicate
+
+data modeling use?
+logical and physical data model?
+
+
+explain you project including resource . how extract data . increamental load all things?
+
+write simple layer from oracle
+
+
+how to connect oracle to aws s3?
+
+why used pyspark?
+
+size of source file of your project
+
+how to load file to s3 in your project?
+
+project file type?
+
+if incremental data slow?
+
+how to know job failed in your project?
+
+glue and lambda what?
+
+we use step function the why airflow?
+
+
+input:nums = [1,2,2,1], output: [1,2]  , duplicates = [x for x in set(nums) if nums.count(x)>1] , print(duplicates)
+write in pyspark
+
+
+python collections why?
+
+elaborate dynamic dataframe?
+
+performance tuning in snowflack. how identify ?
+
+
