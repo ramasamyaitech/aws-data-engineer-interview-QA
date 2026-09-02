@@ -1,0 +1,686 @@
+ Python Data Analyst Interview Questions and Answers (Most Asked)
+
+ Python Basics
+
+ 1. Why is Python used in Data Analysis?
+
+Answer:
+Python is used because:
+
+ Easy syntax
+ Large libraries
+ Fast data processing
+ Visualization support
+ Machine learning integration
+ Automation capabilities
+
+Popular libraries:
+
+ pandas
+ numpy
+ matplotlib
+ seaborn
+
+---
+
+ 2. Difference between List and Tuple?
+
+| List       | Tuple         |
+| ---------- | ------------- |
+| Mutable    | Immutable     |
+| Uses []  | Uses ()     |
+| Can modify | Cannot modify |
+
+Example:
+
+
+my_list = [1,2,3]
+my_tuple = (1,2,3)
+
+
+---
+
+ 3. Difference between append() and extend()?
+
+ append()
+
+Adds single element.
+
+
+a = [1,2]
+a.append([3,4])
+
+print(a)
+ [1,2,[3,4]]
+
+
+ extend()
+
+Adds multiple elements.
+
+
+a = [1,2]
+a.extend([3,4])
+
+print(a)
+ [1,2,3,4]
+
+
+---
+
+ 4. What is a Dictionary?
+
+Answer:
+Stores data in key-value format.
+
+
+student = {
+    "name": "Ram",
+    "age": 25
+}
+
+
+---
+
+ 5. Difference between == and is?
+
+| ==              | is                       |
+| --------------- | ------------------------ |
+| Compares values | Compares memory location |
+
+---
+
+ NumPy Questions
+
+ 6. What is NumPy?
+
+Answer:
+Library used for:
+
+ Numerical operations
+ Arrays
+ Mathematical calculations
+ Faster computation
+
+---
+
+ 7. Why is NumPy faster than List?
+
+Answer:
+
+ Uses optimized C backend
+ Stores homogeneous data
+ Less memory usage
+
+---
+
+ 8. Create NumPy Array
+
+
+import numpy as np
+
+arr = np.array([1,2,3])
+print(arr)
+
+
+---
+
+ 9. Difference between List and NumPy Array?
+
+| List             | NumPy Array           |
+| ---------------- | --------------------- |
+| Slower           | Faster                |
+| More memory      | Less memory           |
+| Basic operations | Vectorized operations |
+
+---
+
+ Pandas Questions
+
+ 10. What is Pandas?
+
+Answer:
+Pandas is used for:
+
+ Data cleaning
+ Data manipulation
+ Data analysis
+ Reading CSV/Excel
+ Filtering/grouping
+
+---
+
+ 11. What is DataFrame?
+
+Answer:
+2-dimensional tabular data structure.
+
+
+import pandas as pd
+
+df = pd.DataFrame({
+    "name": ["Ram","Sam"],
+    "age": [25,30]
+})
+
+
+---
+
+ 12. Read CSV File
+
+
+df = pd.read_csv("sales.csv")
+
+
+---
+
+ 13. Read Excel File
+
+
+df = pd.read_excel("sales.xlsx")
+
+
+---
+
+ 14. Display First 5 Rows
+
+
+df.head()
+
+
+---
+
+ 15. Display Last 5 Rows
+
+
+df.tail()
+
+
+---
+
+ 16. Check Null Values
+
+
+df.isnull().sum()
+
+
+---
+
+ 17. Remove Null Values
+
+
+df.dropna()
+
+
+---
+
+ 18. Fill Missing Values
+
+
+df.fillna(0)
+
+
+---
+
+ 19. Remove Duplicates
+
+
+df.drop_duplicates()
+
+
+---
+
+ 20. Rename Column
+
+
+df.rename(columns={"old":"new"})
+
+
+---
+
+ 21. Filter Data
+
+
+df[df["salary"] > 50000]
+
+
+---
+
+ 22. Sort Data
+
+
+df.sort_values(by="salary", ascending=False)
+
+
+---
+
+ 23. GroupBy in Pandas
+
+Answer:
+Used for aggregation.
+
+
+df.groupby("department")["salary"].sum()
+
+
+---
+
+ 24. Merge DataFrames
+
+
+pd.merge(df1, df2, on="id")
+
+
+---
+
+ 25. Difference between merge() and concat()?
+
+| merge()            | concat()   |
+| ------------------ | ---------- |
+| SQL join           | Stack data |
+| Uses common column | Axis based |
+
+---
+
+ Data Cleaning Questions
+
+ 26. How do you handle missing values?
+
+Answer:
+
+ Remove rows
+ Fill mean/median/mode
+ Replace with default values
+
+Example:
+
+
+df["salary"].fillna(df["salary"].mean())
+
+
+---
+
+ 27. How do you detect duplicates?
+
+
+df.duplicated().sum()
+
+
+---
+
+ 28. How do you change datatype?
+
+
+df["age"] = df["age"].astype(int)
+
+
+---
+
+ 29. How do you find unique values?
+
+
+df["city"].unique()
+
+
+---
+
+ 30. How do you count unique values?
+
+
+df["city"].nunique()
+
+
+---
+
+ Visualization Questions
+
+ 31. What is Matplotlib?
+
+Answer:
+Visualization library used for charts and graphs.
+
+---
+
+ 32. Create Bar Chart
+
+
+import matplotlib.pyplot as plt
+
+plt.bar(df["product"], df["sales"])
+plt.show()
+
+
+---
+
+ 33. Create Line Chart
+
+
+plt.plot(df["month"], df["sales"])
+plt.show()
+
+
+---
+
+ 34. What is Seaborn?
+
+Answer:
+Advanced visualization library built on Matplotlib.
+
+---
+
+ 35. Heatmap Example
+
+
+import seaborn as sns
+
+sns.heatmap(df.corr(), annot=True)
+
+
+---
+
+ Real-Time Scenario Questions
+
+ 36. How do you analyze sales data?
+
+Answer:
+
+1. Read CSV/Excel
+2. Clean data
+3. Handle nulls
+4. Remove duplicates
+5. Calculate KPIs
+6. Create charts
+7. Generate insights
+
+---
+
+ 37. How do you calculate total sales?
+
+
+df["total_sales"] = df["price"]  df["quantity"]
+
+
+---
+
+ 38. Find Top Selling Product
+
+
+df.groupby("product")["quantity"].sum().sort_values(ascending=False)
+
+
+---
+
+ 39. Calculate Profit
+
+
+df["profit"] = (
+    df["selling_price"] - df["cost_price"]
+)  df["quantity"]
+
+
+---
+
+ 40. Monthly Sales Analysis
+
+
+df.groupby("month")["sales"].sum()
+
+
+---
+
+ SQL + Python Questions
+
+ 41. How do you connect Python with MySQL?
+
+
+import mysql.connector
+
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="root",
+    database="salesdb"
+)
+
+
+---
+
+ 42. Load DataFrame into SQL
+
+
+from sqlalchemy import create_engine
+
+engine = create_engine(
+    "mysql+pymysql://root:root@localhost/salesdb"
+)
+
+df.to_sql(
+    "sales",
+    con=engine,
+    if_exists="replace",
+    index=False
+)
+
+
+---
+
+ File Handling Questions
+
+ 43. Read JSON File
+
+
+df = pd.read_json("data.json")
+
+
+---
+
+ 44. Export CSV File
+
+
+df.to_csv("output.csv", index=False)
+
+
+---
+
+ 45. Export Excel File
+
+
+df.to_excel("report.xlsx", index=False)
+
+
+---
+
+ Automation Questions
+
+ 46. Why use Python for Automation?
+
+Answer:
+Python automates:
+
+ Reports
+ ETL pipelines
+ Data cleaning
+ Email reports
+ Dashboards
+
+---
+
+ Exception Handling
+
+ 47. What is try-except?
+
+
+try:
+    print(10/0)
+
+except:
+    print("Error occurred")
+
+
+---
+
+ Important Interview Questions
+
+ 48. Difference between loc and iloc?
+
+| loc         | iloc        |
+| ----------- | ----------- |
+| Label based | Index based |
+
+Example:
+
+
+df.loc[0,"name"]
+df.iloc[0,1]
+
+
+---
+
+ 49. What is Lambda Function?
+
+
+square = lambda x: xx
+
+print(square(5))
+
+
+---
+
+ 50. What is Apply Function?
+
+
+df["bonus"] = df["salary"].apply(
+    lambda x: x0.1
+)
+
+
+---
+
+ KPI Questions
+
+ 51. Common KPIs in Data Analysis
+
+ Revenue
+ Profit
+ Profit Margin
+ Sales Growth
+ Customer Count
+ Average Order Value
+
+---
+
+ Fraud Detection Questions
+
+ 52. How do you detect fraud transactions?
+
+Answer:
+
+ Find unusual amounts
+ Detect duplicate transactions
+ Analyze patterns
+ Use anomaly detection
+
+Example:
+
+
+df[df["amount"] > 100000]
+
+
+---
+
+ Project Questions
+
+ 53. Explain Your Python Project
+
+Sample Answer:
+“I worked on a sales analysis project using Python, Pandas, NumPy, Matplotlib, and Seaborn. I cleaned data, removed duplicates, calculated KPIs, analyzed sales trends, created charts, and generated automated reports.”
+
+---
+
+ Frequently Asked Fresher Questions
+
+ 54. Difference between Python and Excel?
+
+| Python             | Excel           |
+| ------------------ | --------------- |
+| Handles large data | Limited size    |
+| Automation         | Manual work     |
+| Coding required    | GUI based       |
+| Advanced analytics | Basic analytics |
+
+---
+
+ 55. Why use Pandas?
+
+Answer:
+Pandas makes:
+
+ Data cleaning
+ Filtering
+ Grouping
+ Aggregation
+ Transformation
+  easy and fast.
+
+---
+
+ Most Important Topics to Prepare
+
+ Must Learn
+
+ Pandas
+ NumPy
+ Matplotlib
+ Seaborn
+ Data Cleaning
+ GroupBy
+ Merge
+ CSV/Excel handling
+ SQL connection
+ KPI calculations
+
+---
+
+ Most Asked Practical Coding Questions
+
+ Find Missing Values
+
+
+df.isnull().sum()
+
+
+---
+
+ Remove Duplicates
+
+
+df.drop_duplicates()
+
+
+---
+
+ GroupBy Example
+
+
+df.groupby("city")["sales"].sum()
+
+
+---
+
+ Merge Example
+
+
+pd.merge(df1, df2, on="id")
+
+
+---
+
+ Interview Tips
+
+1. Practice Pandas daily
+2. Learn real datasets
+3. Build small projects
+4. Learn charts and KPIs
+5. Practice SQL + Python together
+6. Explain projects confidently
+7. Know debugging basics
