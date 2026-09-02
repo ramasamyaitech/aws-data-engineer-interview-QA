@@ -1,0 +1,24 @@
+services:
+  airflow:
+    image: apache/airflow:3.0.2-python3.12
+    container_name: airflow
+
+    ports:
+      - "8086:8080"
+
+    environment:
+      LD_LIBRARY_PATH: /opt/oracle/instantclient
+
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+      - ./output:/opt/airflow/output
+      - D:/oracle/instantclient_21_18:/opt/oracle/instantclient
+
+    command: >
+      bash -c "
+      pip install --no-cache-dir pandas boto3 oracledb &&
+      airflow standalone
+      "

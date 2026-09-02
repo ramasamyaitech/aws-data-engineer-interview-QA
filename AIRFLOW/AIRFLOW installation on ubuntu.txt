@@ -1,0 +1,40 @@
+AIRFLOW
+
+in ubuntu server,
+
+sudo apt update
+
+sudo apt install python3 python3-pip python3-venv -y
+
+sudo pip install apache-airflow-providers-fab
+
+python3 --version
+
+
+python3 -m venv airflow_venv
+source airflow_venv/bin/activate
+
+
+pip install --upgrade pip
+
+
+pip install apache-airflow
+
+airflow version
+
+airflow db migrate
+
+
+airflow standalone
+
+
+in another terminal,
+
+cat simple_auth_manager_passwords.json.generated
+
+username: admin
+password: GbG2UAKuc7yYwEG5
+
+
+
+

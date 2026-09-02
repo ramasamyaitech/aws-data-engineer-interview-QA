@@ -1,0 +1,26 @@
+pip install apache-airflow-providers-snowflake
+pip install snowflake-connector-python
+
+
+snowflake_employee_etl.py
+
+
+snowflake_conn
+
+Connection Type : Snowflake
+Login           : ramasamy
+Password        : Kvpramasamy123
+Account         : ZX33817
+Warehouse       : COMPUTE_WH
+Database        : EMP_DB
+Schema          : PUBLIC
+Role            : ACCOUNTADMIN
+Region          : ap-southeast-1
+
+
+AWS_AP_SOUTHEAST_1
+
+ZX33817
+
+
+SELECT CURRENT_ACCOUNT(), CURRENT_REGION();
